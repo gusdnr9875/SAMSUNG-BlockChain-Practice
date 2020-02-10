@@ -8,6 +8,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.webkit.WebView;
 import android.widget.Button;
 import android.widget.Toast;
 import com.samsung.android.sdk.blockchain.CoinType;
@@ -17,38 +18,43 @@ import com.samsung.android.sdk.blockchain.account.ethereum.EthereumAccount;
 import com.samsung.android.sdk.blockchain.coinservice.CoinNetworkInfo;
 import com.samsung.android.sdk.blockchain.coinservice.CoinServiceFactory;
 import com.samsung.android.sdk.blockchain.coinservice.ethereum.EthereumService;
-import com.samsung.android.sdk.blockchain.exception.AccountException;
 import com.samsung.android.sdk.blockchain.exception.HardwareWalletException;
-import com.samsung.android.sdk.blockchain.exception.RemoteClientException;
 import com.samsung.android.sdk.blockchain.exception.RootSeedChangedException;
-import com.samsung.android.sdk.blockchain.exception.SsdkUnsupportedException;
 import com.samsung.android.sdk.blockchain.network.EthereumNetworkType;
+import com.samsung.android.sdk.blockchain.ui.CucumberWebView;
+import com.samsung.android.sdk.blockchain.ui.OnSendTransactionListener;
 import com.samsung.android.sdk.blockchain.wallet.HardwareWallet;
 import com.samsung.android.sdk.blockchain.wallet.HardwareWalletType;
 
 import org.jetbrains.annotations.NotNull;
-import org.web3j.protocol.core.Ethereum;
+import org.jetbrains.annotations.Nullable;
 
-import java.lang.reflect.Array;
 import java.math.BigInteger;
 import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 
-public class Main2Activity extends AppCompatActivity {
+public class Main2Activity extends AppCompatActivity implements OnSendTransactionListener {
     Button connect;
-    Button sendSmartContract;
-    Button paymentsheet;
     Button generateAccount;
     Button getAccounts;
+    Button paymentsheet;
+  //  Button sendSmartContract;
+    // 웹뷰버튼
+    Button webViewInitBtn;
+
 
     private SBlockchain sBlockchain ;
     private HardwareWallet wallet;
+    private CucumberWebView webView; // 웹뷰 변수 선언
     Account generateAccount1;
-    List<Account> accounts;
+    private List<Account> accounts;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        // 추가 내용
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main2);
+        // Blockchain SDK Init
         sBlockchain = new SBlockchain(); // Blockchain SDK Init
         try {
             sBlockchain.initialize(this);
@@ -57,12 +63,16 @@ public class Main2Activity extends AppCompatActivity {
         }
         // 끝
 
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main2);
-
 
         //이벤트 리스너 호출 //
         connect = findViewById(R.id.connect);
+        generateAccount =  findViewById(R.id.generateAccount);
+        getAccounts = findViewById(R.id.getAccounts);
+        paymentsheet = findViewById(R.id.paymentsheet);
+        //cucumber 이벤트 리스너 호출
+        webViewInitBtn = findViewById(R.id.webviewinit); // 웹뷰버튼 객체생성
+        webView = findViewById(R.id.cucumber); //큐컴버 웹뷰 객체생성
+
         connect.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -71,7 +81,6 @@ public class Main2Activity extends AppCompatActivity {
             }
         });
 
-        generateAccount =  findViewById(R.id.generateAccount);
         generateAccount.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -80,8 +89,6 @@ public class Main2Activity extends AppCompatActivity {
             }
         });
 
-
-        getAccounts = findViewById(R.id.getAccounts);
         getAccounts.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -91,8 +98,6 @@ public class Main2Activity extends AppCompatActivity {
             }
         });
 
-
-      paymentsheet = findViewById(R.id.paymentsheet);
       paymentsheet.setOnClickListener(new View.OnClickListener() {
           @Override
           public void onClick(View v) {
@@ -101,16 +106,15 @@ public class Main2Activity extends AppCompatActivity {
           }
       });
 
-
-      sendSmartContract = findViewById(R.id.sendSmartContract);
-      sendSmartContract.setOnClickListener(new View.OnClickListener() {
+      webViewInitBtn.setOnClickListener(new View.OnClickListener() {
           @Override
           public void onClick(View v) {
-              Toast.makeText(getApplicationContext()," sendSmartContract버튼이 눌러졌습니다.",Toast.LENGTH_SHORT).show();
+
+              webViewInit();
           }
       });
-        //이벤트 리스너 호출  끝//
 
+        //이벤트 리스너 호출  끝//
     }
 
 
@@ -218,6 +222,58 @@ public class Main2Activity extends AppCompatActivity {
         startActivityForResult(intent,0);
 
 
+    }
+    //5. 웹을 가져오는 실습
+    private void webViewInit() {
+        CoinNetworkInfo coinNetworkInfo = new CoinNetworkInfo(
+                CoinType.ETH,
+                EthereumNetworkType.ROPSTEN,
+                "https://ropsten.infura.io/v3/70ddb1f89ca9421885b6268e847a459d"
+        );
+        EthereumService service = (EthereumService) CoinServiceFactory.getCoinService(this, coinNetworkInfo);
+
+        accounts =  sBlockchain.getAccountManager()
+                .getAccounts(wallet.getWalletId(), CoinType.ETH, EthereumNetworkType.ROPSTEN);
+
+        webView.init(service, accounts.get(0), this);
+        webView.loadUrl("https://faucet.metamask.io/");
+    }
+
+    @Override
+    public void onSendTransaction(
+            @NotNull String requestId,
+            @NotNull EthereumAccount fromAccount,
+            @NotNull String toAddress,
+            @org.jetbrains.annotations.Nullable BigInteger value,
+            @org.jetbrains.annotations.Nullable String data,
+            @org.jetbrains.annotations.Nullable BigInteger nonce
+    ) {
+        HardwareWallet wallet =
+                sBlockchain.getHardwareWalletManager().getConnectedHardwareWallet();
+
+        Intent intent =
+                webView.createEthereumPaymentSheetActivityIntent(
+                        this,
+                        requestId,
+                        wallet,
+                        toAddress,
+                        value,
+                        data,
+                        nonce
+                );
+
+        startActivityForResult(intent, 0);
+
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if (requestCode != 0) {
+            return;
+        }
+        webView.onActivityResult(requestCode, resultCode, data);
     }
 
 

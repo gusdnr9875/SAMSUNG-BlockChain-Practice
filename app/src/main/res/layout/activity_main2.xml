@@ -9,7 +9,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
-        android:layout_marginBottom="100dp"
+
+
         android:text="실습화면입니다:)"
         android:textSize="30dp" />
 
@@ -73,18 +74,25 @@
         android:orientation="horizontal">
 
         <Button
-            android:id="@+id/sendSmartContract"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:id="@+id/webviewinit"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
             android:layout_weight="1"
-            android:text="sendSmartContract" />
+            android:text="webview init" />
     </LinearLayout>
 
+    <com.samsung.android.sdk.blockchain.ui.CucumberWebView
+        android:id="@+id/cucumber"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
 
     <ImageView
         android:id="@+id/imageView2"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:src="@drawable/av" />
+
+
+
 
 </LinearLayout>

@@ -58,7 +58,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:onClick="played"
-            android:text="재생" />
+            android:text="음악 재생" />
 
         <Button
             android:id="@+id/button5"
@@ -66,7 +66,29 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:onClick="stopped"
-            android:text="정지" />
+            android:text="음악 정지" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <Button
+            android:id="@+id/button7"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:onClick="reservation"
+            android:text="숙박예약하기" />
+
+        <Button
+            android:id="@+id/button6"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:onClick="openLock"
+            android:text="도어락 열기" />
     </LinearLayout>
 
     <ImageView

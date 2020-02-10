@@ -30,14 +30,12 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
     }
-
     public void firsted(View view){
         Toast.makeText(getApplicationContext(),"버튼이 눌러졌습니다.",Toast.LENGTH_SHORT).show();
         Intent in = new Intent(MainActivity.this, Main2Activity.class);
         startActivity(in);
 
     }
-
     public void homePage(View view){
         Toast.makeText(getApplicationContext(),"버튼이 눌러졌습니다.",Toast.LENGTH_SHORT).show();
         Intent in = new Intent(Intent.ACTION_VIEW, Uri.parse("https://developer.samsung.com/blockchain/platform/programming-guide/connect-with-hardware-wallet.html"));
@@ -50,15 +48,12 @@ public class MainActivity extends AppCompatActivity {
         mediaPlayer.start();
 
     }
-
     public void stopped(View view){
         // 정지버튼
         mediaPlayer.stop();
         // 초기화
         mediaPlayer.reset();
     }
-
-
     @Override
     protected void onDestroy() {
         super.onDestroy();
@@ -68,4 +63,12 @@ public class MainActivity extends AppCompatActivity {
             mediaPlayer = null;
         }
     }
+
+    public void reservation(){
+
+    }
+    public void openLock(){
+
+    }
+
 }
