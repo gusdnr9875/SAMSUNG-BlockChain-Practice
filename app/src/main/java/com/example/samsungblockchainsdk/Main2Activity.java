@@ -12,6 +12,8 @@ import com.samsung.android.sdk.blockchain.CoinType;
 import com.samsung.android.sdk.blockchain.ListenableFutureTask;
 import com.samsung.android.sdk.blockchain.SBlockchain;
 import com.samsung.android.sdk.blockchain.coinservice.CoinNetworkInfo;
+import com.samsung.android.sdk.blockchain.coinservice.CoinServiceFactory;
+import com.samsung.android.sdk.blockchain.coinservice.ethereum.EthereumService;
 import com.samsung.android.sdk.blockchain.exception.AccountException;
 import com.samsung.android.sdk.blockchain.exception.HardwareWalletException;
 import com.samsung.android.sdk.blockchain.exception.RemoteClientException;
@@ -181,6 +183,22 @@ public class Main2Activity extends AppCompatActivity {
     }
 
 
+
+    //4. paymentsheet
+    private  void setPaymentsheet(){
+        CoinNetworkInfo coinNetworkInfo = new CoinNetworkInfo(
+                CoinType.ETH,
+                EthereumNetworkType.ROPSTEN,
+                "https://ropsten.infura.io/v3/70ddb1f89ca9421885b6268e847a459d"// 퍼블릭 노드인 공짜인 주소를 가져온거야  + ropsten.infura.io로 들어가서 퍼블릭 노드 불러오기
+        );
+
+        // 메타마스크와 삼성키스토어의 계좌번호는 서로 다르다. 규칙이 다르기 때문이다.
+
+        EthereumService service = (EthereumService) CoinServiceFactory.getCoinService(this)
+        service.createEthereumPaymentSheetActivityIntent(this, wallet, )
+
+
+    }
 
 
 
