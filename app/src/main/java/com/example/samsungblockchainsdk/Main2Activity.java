@@ -55,6 +55,8 @@ public class Main2Activity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main2);
 
+
+        //이벤트 리스너 호출 //
         connect = findViewById(R.id.connect);
         connect.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -101,9 +103,14 @@ public class Main2Activity extends AppCompatActivity {
               Toast.makeText(getApplicationContext()," sendSmartContract버튼이 눌러졌습니다.",Toast.LENGTH_SHORT).show();
           }
       });
-
+        //이벤트 리스너 호출  끝//
 
     }
+
+
+
+
+    //1. connect
     public void connected(){
        sBlockchain.getHardwareWalletManager()
                .connect(HardwareWalletType.SAMSUNG,true) //하드웨어 wallet을 반환하는 형태입니다.
@@ -129,10 +136,12 @@ public class Main2Activity extends AppCompatActivity {
 
                    }
                });
-
-
-
     }
+
+
+
+
+    //2. generateAccount
     private  void generate() { //계정생성
         CoinNetworkInfo coinNetworkInfo = new CoinNetworkInfo(
                 CoinType.ETH,
@@ -161,9 +170,11 @@ public class Main2Activity extends AppCompatActivity {
                     }
                 });
 
-
-
     }
+
+
+
+    //3. getAccounts
     private  void setgetAccounts() { //
         List<Account> accounts = sBlockchain.getAccountManager()
                 .getAccounts(wallet.getWalletId(),CoinType.ETH, EthereumNetworkType.ROPSTEN);
@@ -173,4 +184,8 @@ public class Main2Activity extends AppCompatActivity {
 
 
 
-    }
+
+
+
+
+}
