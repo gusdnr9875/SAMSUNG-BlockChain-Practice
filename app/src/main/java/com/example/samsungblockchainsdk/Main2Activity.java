@@ -3,6 +3,8 @@ package com.example.samsungblockchainsdk;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.samsung.android.sdk.blockchain.account.Account;
+
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -11,6 +13,7 @@ import android.widget.Toast;
 import com.samsung.android.sdk.blockchain.CoinType;
 import com.samsung.android.sdk.blockchain.ListenableFutureTask;
 import com.samsung.android.sdk.blockchain.SBlockchain;
+import com.samsung.android.sdk.blockchain.account.ethereum.EthereumAccount;
 import com.samsung.android.sdk.blockchain.coinservice.CoinNetworkInfo;
 import com.samsung.android.sdk.blockchain.coinservice.CoinServiceFactory;
 import com.samsung.android.sdk.blockchain.coinservice.ethereum.EthereumService;
@@ -27,6 +30,7 @@ import org.jetbrains.annotations.NotNull;
 import org.web3j.protocol.core.Ethereum;
 
 import java.lang.reflect.Array;
+import java.math.BigInteger;
 import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
@@ -41,7 +45,7 @@ public class Main2Activity extends AppCompatActivity {
     private SBlockchain sBlockchain ;
     private HardwareWallet wallet;
     Account generateAccount1;
-
+    List<Account> accounts;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         // 추가 내용
@@ -93,6 +97,7 @@ public class Main2Activity extends AppCompatActivity {
           @Override
           public void onClick(View v) {
               Toast.makeText(getApplicationContext(),"paymentsheet버튼이 눌러졌습니다.",Toast.LENGTH_SHORT).show();
+              setPaymentsheet();
           }
       });
 
@@ -177,7 +182,7 @@ public class Main2Activity extends AppCompatActivity {
 
     //3. getAccounts
     private  void setgetAccounts() { //
-        List<Account> accounts = sBlockchain.getAccountManager()
+        accounts = sBlockchain.getAccountManager()
                 .getAccounts(wallet.getWalletId(),CoinType.ETH, EthereumNetworkType.ROPSTEN);
         Log.d("MyApp", Arrays.toString(new List[]{accounts})); // 리스트형태로 로그메시지 출력
     }
@@ -185,17 +190,32 @@ public class Main2Activity extends AppCompatActivity {
 
 
     //4. paymentsheet
-    private  void setPaymentsheet(){
+    private  void setPaymentsheet(){ //계정으로 0.01이더만큼 전송합니다.
         CoinNetworkInfo coinNetworkInfo = new CoinNetworkInfo(
                 CoinType.ETH,
                 EthereumNetworkType.ROPSTEN,
                 "https://ropsten.infura.io/v3/70ddb1f89ca9421885b6268e847a459d"// 퍼블릭 노드인 공짜인 주소를 가져온거야  + ropsten.infura.io로 들어가서 퍼블릭 노드 불러오기
         );
 
+        sBlockchain.getAccountManager() //우리 어카운트가 잇겟죠
+                .getAccounts(wallet.getWalletId(),
+                        CoinType.ETH,
+                        EthereumNetworkType.ROPSTEN
+                        );
         // 메타마스크와 삼성키스토어의 계좌번호는 서로 다르다. 규칙이 다르기 때문이다.
 
-        EthereumService service = (EthereumService) CoinServiceFactory.getCoinService(this)
-        service.createEthereumPaymentSheetActivityIntent(this, wallet, )
+        EthereumService service = (EthereumService) CoinServiceFactory.getCoinService(this,coinNetworkInfo);
+        Intent intent = service
+                .createEthereumPaymentSheetActivityIntent(
+                        this,
+                        wallet,
+                        (EthereumAccount) accounts.get(0),
+                        "0x94e44C14e7A5863fed31a68AAD9bbc7d30d6A019",
+                        new BigInteger("10000000000000000"),
+                        null,
+                        null
+                );
+        startActivityForResult(intent,0);
 
 
     }
