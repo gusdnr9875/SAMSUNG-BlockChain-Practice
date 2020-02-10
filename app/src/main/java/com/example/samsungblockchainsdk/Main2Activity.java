@@ -8,7 +8,6 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
-
 import com.samsung.android.sdk.blockchain.CoinType;
 import com.samsung.android.sdk.blockchain.ListenableFutureTask;
 import com.samsung.android.sdk.blockchain.SBlockchain;
@@ -146,7 +145,7 @@ public class Main2Activity extends AppCompatActivity {
         CoinNetworkInfo coinNetworkInfo = new CoinNetworkInfo(
                 CoinType.ETH,
                 EthereumNetworkType.ROPSTEN,
-                "https://ropsten.infura.io/v3/70ddb1f89ca9421885b6268e847a459d"// 퍼블릭 노드인 공짜인 주소를 가져온거야
+                "https://ropsten.infura.io/v3/70ddb1f89ca9421885b6268e847a459d"// 퍼블릭 노드인 공짜인 주소를 가져온거야  + ropsten.infura.io로 들어가서 퍼블릭 노드 불러오기
         );
 
         sBlockchain.getAccountManager()
@@ -178,11 +177,8 @@ public class Main2Activity extends AppCompatActivity {
     private  void setgetAccounts() { //
         List<Account> accounts = sBlockchain.getAccountManager()
                 .getAccounts(wallet.getWalletId(),CoinType.ETH, EthereumNetworkType.ROPSTEN);
-        Log.d("MyApp", Arrays.toString(new List[]{accounts}));
+        Log.d("MyApp", Arrays.toString(new List[]{accounts})); // 리스트형태로 로그메시지 출력
     }
-
-
-
 
 
 

@@ -10,6 +10,9 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
 
+
+
+// 기본 환경설정: 커널번호 10번 클릭하고 usb디버깅 허용으로 바꾸기, keystore 업데이트를 하고 계정 생성수 메타마스크 로그아웃후  연동시키기! 테스트넷에 이더받고 그걸로 실행하는 환경 구축하기
 public class MainActivity extends AppCompatActivity {
     // MediaPlayer 객체생성
     MediaPlayer mediaPlayer;
